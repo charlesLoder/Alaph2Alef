@@ -36,17 +36,24 @@ function transliterateSyriacToHebrew(input) {
 		"\u072C": "\u05EA", // Syriac Taw -> Hebrew Dalath
 	};
 
-	const filteredInput = input
-		.split("")
-		.filter((char) => Object.keys(syriacToHebrewMap).includes(char))
-		.join("");
+	// split input into words
+	const words = input.split(" ");
+	// over each word, remove characters that are not Syriac consonants
+	const wordsWithoutNonConsonants = words.map((word) => {
+		return word.replace(/[^A\u0710-\u072C]/g, "");
+	});
 
-	const transliteratedString = filteredInput
-		.split("")
-		.map((char) => syriacToHebrewMap[char])
-		.join("");
+	// over each word, replace Syriac consonants with their Hebrew counterparts
+	const wordsWithHebrewConsonants = wordsWithoutNonConsonants.map((word) => {
+		return word
+			.split("")
+			.map((letter) => {
+				return syriacToHebrewMap[letter] || letter;
+			})
+			.join("");
+	});
 
-	return transliteratedString;
+	return wordsWithHebrewConsonants.join(" ");
 }
 
 const input = document.querySelector("#input");
